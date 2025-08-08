@@ -2,6 +2,23 @@
 
 > **Important**: This file contains instructions for GitHub Copilot agents. If you are a human developer, you can safely ignore this file unless you want to understand how the automation works.
 
+## ⚠️ CRITICAL REQUIREMENTS
+
+**BEFORE STARTING**: You MUST use VS Code's file creation tools to actually create files in the user's workspace. Simply referencing or describing file content is NOT sufficient.
+
+**MANDATORY ACTIONS:**
+1. **Use `create_file` tool**: For every template file that needs to be copied
+2. **Read complete template files**: Use `read_file` to get the full content before copying
+3. **Create directory structures**: Ensure `.vscode/`, `.github/`, `.prompts/` directories exist
+4. **Copy ALL required files**: Use the checklist in section 📋 to verify completeness
+5. **Verify file creation**: Each file must physically exist in the user's workspace
+
+**DO NOT:**
+- Just describe what files should be copied
+- Reference file contents without creating actual files
+- Skip any files from the mandatory checklist
+- Assume files will be created later
+
 ## 🎯 Purpose
 
 These instructions guide GitHub Copilot agents on how to bootstrap new projects using this template repository. When a user references `https://github.com/andrelohmann/copilot-project-template`, follow these steps.
@@ -60,41 +77,64 @@ This archive serves as:
 
 **Important**: This file should be committed to git as valuable development material, but must never be loaded into context or interpreted by agents.
 
-### 5. Template File Selection
+### 5. Template File Selection and Copying
+**IMPORTANT**: Use VS Code's file creation tools to copy template files. DO NOT just reference file content - create actual files in the user's workspace.
+
 Based on the project analysis, copy relevant template files from this repository:
 
-#### Core Files (Always Copy)
-- `templates/.vscode/mcp.json` → Project's `.vscode/mcp.json` (no placeholder replacement needed)
-- `templates/.vscode/settings.json` → Project's `.vscode/settings.json`
-- `templates/.vscode/extensions.json` → Project's `.vscode/extensions.json`
-- `templates/.github/copilot-instructions.md` → Project's `.github/copilot-instructions.md`
+#### Core Files (ALWAYS COPY - MANDATORY)
+**These files must be copied to every project without exception:**
+
+1. **VS Code Configuration (Complete .vscode/ directory)**:
+   - `templates/.vscode/mcp.json` → Project's `.vscode/mcp.json` (copy as-is, no modifications)
+   - `templates/.vscode/settings.json` → Project's `.vscode/settings.json` (copy as-is)
+   - `templates/.vscode/extensions.json` → Project's `.vscode/extensions.json` (copy as-is)
+   - `templates/.vscode/tasks.json` → Project's `.vscode/tasks.json` (copy as-is)
+
+2. **GitHub Copilot Instructions**:
+   - `templates/.github/copilot-instructions.md` → Project's `.github/copilot-instructions.md` (replace placeholders)
+
+3. **Environment Templates**:
+   - `templates/.env.template` → Project's `.env.template` (for project environment variables)
+   - `templates/.env.mcp.credentials.template` → Project's `.env.mcp.credentials.template` (copy as-is)
+
+4. **Git Configuration**:
+   - `templates/.gitignore` → Project's `.gitignore` (copy as-is, ensures proper exclusions)
 
 #### Recommended Files  
-- `templates/.env.template` → Project's `.env.template` (for project environment variables)
-- `templates/.env.mcp.credentials.template` → Project's `.env.mcp.credentials.template` (for MCP server credentials)
+**Copy these for most projects:**
+- `templates/.prompts/archive.md` → Project's `.prompts/archive.md` (create with proper header)
 
 #### Conditional Files (Copy Based on Project Type)
-- **All Projects**: `templates/.vscode/` content, `templates/.github/` content
-- **Web Projects**: Select relevant configs from `templates/configs/` (package.json, eslint.config.js, prettier.config.js, tsconfig.json)
-- **Python Projects**: Select relevant configs from `templates/configs/` (requirements.txt)
-- **Node.js Projects**: Select relevant configs from `templates/configs/` (package.json, eslint.config.js, prettier.config.js, tsconfig.json)
-- **Database Projects**: Additional environment variables in `.env.mcp.credentials` for database connections
+**Select appropriate configuration files based on technology stack:**
+- **Web Projects**: `templates/configs/package.json`, `eslint.config.js`, `prettier.config.js`, `tsconfig.json`
+- **Python Projects**: `templates/configs/requirements.txt`
+- **Node.js Projects**: `templates/configs/package.json`, `eslint.config.js`, `prettier.config.js`, `tsconfig.json`
+- **Database Projects**: Additional environment variables in `.env.template`
 
-#### Critical File Handling
-When copying template files:
-- **Copy `templates/.vscode/mcp.json` as-is** - No placeholder replacement needed, uses `envFile` configuration
-- **Copy `templates/.env.mcp.credentials.template` as-is** - User will copy this to `.env.mcp.credentials` locally
-- **MCP Credentials** - Uses `envFile: "${workspaceFolder}/.env.mcp.credentials"` to load credentials automatically
-- **Secure Storage** - Credentials stay in local `.env.mcp.credentials` file (excluded from version control)
-- **Prerequisites** - Verify Node.js/npx availability before proceeding
+#### CRITICAL FILE COPYING REQUIREMENTS
+**When copying template files, you MUST:**
 
-Standard placeholders for other files:
+1. **Use File Creation Tools**: Always use VS Code's file creation tools (`create_file`) to actually create files in the user's workspace
+2. **Copy Complete Content**: Read the complete template file content and copy it entirely
+3. **Preserve Directory Structure**: Create necessary directories (`.vscode/`, `.github/`, `.prompts/`, etc.)
+4. **Copy All .vscode Files**: The complete `.vscode/` directory is essential for MCP and AI integration
+5. **Replace Placeholders**: Update template placeholders with actual project values where needed
+
+**Template Placeholders to Replace:**
 - `{{PROJECT_NAME}}` → Extracted from directory name or user specification
 - `{{TECH_STACK}}` → Technology stack from user request
+- `{{PROJECT_TYPE}}` → Type of project (web app, API, CLI tool, etc.)
+- `{{ARCHITECTURE_PATTERN}}` → Architecture pattern being used
+- `{{FRONTEND_DESCRIPTION}}`, `{{BACKEND_DESCRIPTION}}`, etc. → Project-specific details
 
-Note: 
-- Context7 requires no credentials
-- Brave Search requires `BRAVE_API_KEY` in `.env.mcp.credentials`
+**Files to Copy As-Is (NO placeholders):**
+- `templates/.vscode/mcp.json` - Uses `envFile` configuration, no modifications needed
+- `templates/.vscode/settings.json` - Pre-configured VS Code settings
+- `templates/.vscode/extensions.json` - Extension recommendations
+- `templates/.vscode/tasks.json` - Development tasks
+- `templates/.env.mcp.credentials.template` - User will copy this to `.env.mcp.credentials` locally
+- `templates/.gitignore` - Proper exclusion patterns
 
 ### 6. VS Code Configuration
 
@@ -257,7 +297,48 @@ When copying template files:
 - Merge with existing files rather than overwriting when possible
 - Preserve any existing user configurations
 
-## 🚫 Important Restrictions
+## � MANDATORY FILE COPYING CHECKLIST
+
+**CRITICAL**: Before completing initialization, verify ALL these files have been copied to the user's project:
+
+### ✅ VS Code Configuration (REQUIRED)
+- [ ] `.vscode/mcp.json` (exact copy from `templates/.vscode/mcp.json`)
+- [ ] `.vscode/settings.json` (exact copy from `templates/.vscode/settings.json`)
+- [ ] `.vscode/extensions.json` (exact copy from `templates/.vscode/extensions.json`)
+- [ ] `.vscode/tasks.json` (exact copy from `templates/.vscode/tasks.json`)
+
+### ✅ GitHub Configuration (REQUIRED)
+- [ ] `.github/copilot-instructions.md` (copy from `templates/.github/copilot-instructions.md` with placeholders replaced)
+
+### ✅ Environment Templates (REQUIRED)
+- [ ] `.env.template` (copy from `templates/.env.template`)
+- [ ] `.env.mcp.credentials.template` (exact copy from `templates/.env.mcp.credentials.template`)
+
+### ✅ Git Configuration (REQUIRED)
+- [ ] `.gitignore` (copy from `templates/.gitignore` or merge with existing)
+
+### ✅ Prompt Management (RECOMMENDED)
+- [ ] `.prompts/archive.md` (create with proper header from instructions)
+
+### ✅ Project-Specific Configs (CONDITIONAL)
+**Copy based on project type:**
+- [ ] `package.json` (for Node.js/web projects)
+- [ ] `tsconfig.json` (for TypeScript projects)
+- [ ] `eslint.config.js` (for JavaScript/TypeScript projects)
+- [ ] `prettier.config.js` (for formatting)
+- [ ] `requirements.txt` (for Python projects)
+
+### 🔧 File Creation Verification
+**After copying each file, verify:**
+- [ ] File exists in the correct location in user's workspace
+- [ ] File content is complete and not truncated
+- [ ] Directory structure is created properly (`.vscode/`, `.github/`, etc.)
+- [ ] Placeholders are replaced with actual project values (where applicable)
+- [ ] Template-only files are copied exactly as-is (`.vscode/*`, `.env.mcp.credentials.template`)
+
+**If ANY file is missing or incomplete, the template setup is NOT COMPLETE.**
+
+## �🚫 Important Restrictions
 
 ### Do Not Copy These Files
 - This `instructions.md` file
@@ -291,7 +372,24 @@ After initialization, update the project's README.md to include:
 ## 🎯 Success Criteria
 
 The initialization is successful when:
-- The developer can immediately start coding with enhanced Copilot assistance
-- All development tools are properly configured
-- Project follows established conventions and best practices
-- No template artifacts remain in the final project structure
+- **All mandatory files copied**: Every file in the checklist physically exists in the user's workspace
+- **VS Code configuration complete**: All `.vscode/` files are properly set up for MCP and AI integration
+- **GitHub Copilot instructions customized**: Project-specific instructions with placeholders replaced
+- **Environment templates ready**: Both `.env.template` and `.env.mcp.credentials.template` are available
+- **Development tools configured**: The developer can immediately start coding with enhanced Copilot assistance
+- **Project follows conventions**: Established conventions and best practices are enforced
+- **No template artifacts remain**: No template-specific files or placeholder content in the final project
+
+## ✅ FINAL VERIFICATION COMMAND
+
+**After completing all steps, run this verification:**
+
+```bash
+# Verify all mandatory files exist
+ls -la .vscode/mcp.json .vscode/settings.json .vscode/extensions.json .vscode/tasks.json
+ls -la .github/copilot-instructions.md
+ls -la .env.template .env.mcp.credentials.template
+ls -la .gitignore
+```
+
+**All files MUST exist. If any file is missing, the template setup is INCOMPLETE.**
