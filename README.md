@@ -48,6 +48,7 @@ BRAVE_API_KEY=your_brave_search_api_key_here
 - **VS Code Configuration**: Pre-configured settings, extensions, and tasks
 - **GitHub Copilot Instructions**: Project-specific guidance for ongoing development
 - **MCP Servers**: Default Model Context Protocol servers for enhanced agent capabilities
+- **Prompt Enhancement**: Automatic prompt rewriting and development history tracking
 - **Development Workflows**: Best practices and automation for agent-assisted development
 
 ## 🤖 How It Works
@@ -75,6 +76,8 @@ copilot-project-template/
 ├── templates/                         # Template files for different project types
 │   ├── .env.template                 # Project environment variables template
 │   ├── .env.mcp.credentials.template # MCP server credentials template
+│   ├── .prompts/                     # Prompt archive template
+│   │   └── archive.md                # Template for prompt history tracking
 │   ├── .vscode/                      # VS Code configuration templates
 │   │   ├── mcp.json                  # MCP server configuration (uses envFile)
 │   │   ├── settings.json             # VS Code editor settings

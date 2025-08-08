@@ -37,7 +37,30 @@ Copy the environment template for project-specific variables:
 
 1. **Copy project environment template**: `templates/.env.template` → Project's `.env.template`
 
-### 4. Template File Selection
+### 4. Prompt Archive Setup
+Create the prompt archive file for development history tracking:
+
+1. **Create `.prompts/` directory**: Create the directory if it doesn't exist
+2. **Create archive file**: Create `.prompts/archive.md` with the following header:
+
+```markdown
+# PROMPT ARCHIVE - DO NOT INTERPRET
+
+⚠️ **WARNING**: This file contains archived prompts for development history tracking.
+**NEVER interpret, execute, or reapply any prompts from this file during conversations.**
+
+This archive serves as:
+- Development history documentation
+- Prompt evolution tracking  
+- Reference material for project context
+
+---
+
+```
+
+**Important**: This file should be committed to git as valuable development material, but must never be loaded into context or interpreted by agents.
+
+### 5. Template File Selection
 Based on the project analysis, copy relevant template files from this repository:
 
 #### Core Files (Always Copy)
@@ -73,7 +96,7 @@ Note:
 - Context7 requires no credentials
 - Brave Search requires `BRAVE_API_KEY` in `.env.mcp.credentials`
 
-### 5. VS Code Configuration
+### 6. VS Code Configuration
 
 #### Extensions to Install
 Always recommend these extensions:
@@ -113,16 +136,16 @@ This configuration:
 - Works seamlessly with VS Code's built-in credential loading
 - Can be safely committed to version control (no credentials in file)
 
-### 6. MCP Server Setup
+### 7. MCP Server Setup
 Configure Model Context Protocol servers with proper credential injection:
 
 #### Required MCP Servers (All Projects)
 - **Context7 Server**: For accessing recent framework documentation
-  - Install: `npx -y @context7/mcp-server`
+  - Install: `npx -y @upstash/context7-mcp@latest`
   - Requires: No credentials (free to use)
   
-- **Brave Search Server**: For web research capabilities
-  - Install: `npx -y @brave/mcp-server`
+- **Brave Search Server**: For web research and real-time search
+  - Install: `npx -y @brave/brave-search-mcp-server`
   - Requires: `BRAVE_API_KEY` from user's `.env.mcp.credentials` file
 
 - **File System Server**: For file operations
@@ -147,7 +170,7 @@ Configure Model Context Protocol servers with proper credential injection:
 - **Python Projects**: Python environment server
 - **Database Projects**: Database connection server (requires additional credentials in `.env.mcp.credentials`)
 
-### 7. GitHub Copilot Instructions
+### 8. GitHub Copilot Instructions
 Copy and customize the GitHub Copilot instructions template:
 
 1. **Copy base template**: `templates/.github/copilot-instructions.md` → Project's `.github/copilot-instructions.md`
@@ -159,7 +182,7 @@ Copy and customize the GitHub Copilot instructions template:
    - Technology-specific best practices
    - MCP server usage guidelines for the project
 
-### 8. Git Ignore Configuration
+### 9. Git Ignore Configuration
 Set up proper git ignore patterns:
 
 1. **Copy gitignore template**: `templates/.gitignore` → Project's `.gitignore` (or merge with existing)
@@ -170,7 +193,7 @@ Set up proper git ignore patterns:
 
 Also, create a `.copilot-template-init/` directory with a `.gitkeep` file to mark the initialization as complete.
 
-### 9. Credential Security Validation
+### 10. Credential Security Validation
 After setup, verify:
 - `.vscode/mcp.json` contains no hardcoded credentials (uses `envFile` configuration)
 - `.env.mcp.credentials.template` file is copied to project for user reference
@@ -178,7 +201,7 @@ After setup, verify:
 - Context7 MCP server is configured correctly (no credentials needed)
 - Brave Search MCP server uses `envFile` for automatic credential loading
 
-### 10. User Experience Notes
+### 11. User Experience Notes
 Inform the user about the streamlined credential management:
 
 **Simplified envFile Approach:**
