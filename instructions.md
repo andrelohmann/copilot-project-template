@@ -100,14 +100,20 @@ cd {{PROJECT_NAME}}
 python -m venv venv
 source venv/bin/activate  # Linux/Mac
 # venv\Scripts\activate   # Windows
-pip install fastapi uvicorn python-multipart
+pip install --upgrade pip
+pip install fastapi uvicorn python-multipart python-dotenv
 ```
 
 **Django Projects**:
 ```bash
-pip install django
-django-admin startproject {{PROJECT_NAME}}
+mkdir {{PROJECT_NAME}}
 cd {{PROJECT_NAME}}
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+# venv\Scripts\activate   # Windows
+pip install --upgrade pip
+pip install django python-dotenv
+django-admin startproject core .
 ```
 
 #### Mobile/Desktop Framework Initialization
@@ -138,8 +144,15 @@ npm init -y
 mkdir {{PROJECT_NAME}}
 cd {{PROJECT_NAME}}
 python -m venv venv
-source venv/bin/activate
-pip install setuptools wheel
+source venv/bin/activate  # Linux/Mac
+# venv\Scripts\activate   # Windows
+pip install --upgrade pip
+pip install setuptools wheel build python-dotenv
+# Create basic package structure
+mkdir src/{{PROJECT_NAME}}
+touch src/{{PROJECT_NAME}}/__init__.py
+touch setup.py
+touch pyproject.toml
 ```
 
 **Rust Projects**:
@@ -160,6 +173,15 @@ go mod init {{PROJECT_NAME}}
 - **Replace `{{PROJECT_NAME}}`** with the actual project name
 - **Install dependencies** as part of the initialization process
 - **Change directory** into the project folder before copying template files
+
+#### Python-Specific Requirements (CRITICAL)
+- **ALWAYS create virtual environment first**: `python -m venv venv`
+- **ALWAYS activate virtual environment**: `source venv/bin/activate` (Linux/Mac) or `venv\Scripts\activate` (Windows)
+- **ALWAYS upgrade pip**: `pip install --upgrade pip`
+- **Install all packages within venv**: Never use global Python installation
+- **Include python-dotenv**: For environment variable loading
+- **Keep venv activated**: All subsequent pip commands must run within activated venv
+- **Test venv activation**: Run `which python` (Linux/Mac) or `where python` (Windows) to verify venv path
 
 ### 4. Environment Configuration
 Copy the environment template for project-specific variables:
@@ -310,8 +332,17 @@ read_file: "https://github.com/andrelohmann/copilot-project-template/templates/c
 create_file: "prettier.config.js" (exact content from template)
 
 # For Python projects:
+# CRITICAL: Ensure venv is activated before installing dependencies
+source venv/bin/activate  # Linux/Mac (venv\Scripts\activate for Windows)
+
 read_file: "https://github.com/andrelohmann/copilot-project-template/templates/configs/requirements.txt"
-create_file: "requirements.txt" (exact content from template)
+create_file: "requirements.txt" (merge with existing or create new)
+
+# Install template requirements within venv
+pip install -r requirements.txt
+
+# Update VS Code settings to use project venv Python interpreter
+# This should be done automatically by copying .vscode/settings.json
 ```
 
 #### MANDATORY VERIFICATION COMMAND
@@ -396,7 +427,7 @@ Configure Model Context Protocol servers with proper credential injection:
 
 #### Project-Specific MCP Servers
 - **Web Projects**: HTTP server for API testing
-- **Python Projects**: Python environment server
+- **Python Projects**: Python environment server (configured to use project venv: `./venv/bin/python`)
 - **Database Projects**: Database connection server (requires additional credentials in `.env.mcp.credentials`)
 
 ### 9. GitHub Copilot Instructions
@@ -432,10 +463,37 @@ Copy and customize the GitHub Copilot instructions template:
 
 #### Python Projects (FastAPI/Django)
 ```bash
-# Merge requirements.txt
-# Copy Python-specific VS Code settings
+# CRITICAL: Ensure virtual environment is activated before all operations
+source venv/bin/activate  # Linux/Mac
+# venv\Scripts\activate   # Windows
+
+# Verify venv is active (should show project venv path)
+which python && which pip
+
+# Merge requirements.txt with existing project dependencies
+cat templates/configs/requirements.txt >> requirements.txt
+
+# Install template requirements within venv
+pip install -r requirements.txt
+
+# Copy Python-specific VS Code settings (includes Python interpreter path)
 # Update project structure in .github/copilot-instructions.md
-# Configure virtual environment settings
+# Configure virtual environment settings in .vscode/settings.json:
+# "python.defaultInterpreterPath": "./venv/bin/python"
+
+# For FastAPI projects, add these dependencies:
+pip install pytest pytest-asyncio httpx
+
+# For Django projects, add these dependencies:
+pip install pytest-django django-extensions
+
+# Create requirements.txt with current venv packages
+pip freeze > requirements.txt
+
+# Verify Python environment is properly configured
+python -c "import sys; print(f'Python: {sys.executable}')"
+python -c "import fastapi; print('FastAPI installed successfully')" # For FastAPI
+python -c "import django; print('Django installed successfully')"   # For Django
 ```
 
 #### Express.js Projects
@@ -558,6 +616,14 @@ When copying template files:
 - [ ] `prettier.config.js` (for formatting)
 - [ ] `requirements.txt` (for Python projects)
 
+### ✅ Python Projects (ADDITIONAL REQUIREMENTS)
+**For Python projects, ALSO verify:**
+- [ ] Virtual environment created: `venv/` directory exists
+- [ ] Virtual environment activated: `which python` shows venv path
+- [ ] Dependencies installed in venv: `pip list` shows template packages
+- [ ] VS Code Python interpreter configured: `.vscode/settings.json` contains venv path
+- [ ] Requirements file updated: `requirements.txt` contains all dependencies
+
 ### 🔧 File Creation Verification
 **After copying each file, verify:**
 - [ ] File exists in the correct location in user's workspace
@@ -620,6 +686,15 @@ ls -la .vscode/mcp.json .vscode/settings.json .vscode/extensions.json .vscode/ta
 ls -la .github/copilot-instructions.md
 ls -la .env.template .env.mcp.credentials.template
 ls -la .gitignore
+
+# For Python projects, ALSO verify:
+ls -la venv/  # Virtual environment directory should exist
+source venv/bin/activate  # Activate venv (Linux/Mac)
+which python  # Should show path to venv/bin/python
+pip list | grep -E "(fastapi|django|python-dotenv)"  # Verify key packages installed
+deactivate  # Exit venv
 ```
 
 **All files MUST exist. If any file is missing, the template setup is INCOMPLETE.**
+
+**For Python projects: If venv is missing or packages not installed in venv, the setup is INCOMPLETE.**
