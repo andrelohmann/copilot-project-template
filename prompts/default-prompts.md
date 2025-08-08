@@ -16,6 +16,7 @@ Requirements:
 - React Router for navigation
 - Basic component structure
 - Responsive design
+- MCP servers for documentation (Context7) and web research (Brave Search)
 ```
 
 ### Next.js Full-Stack Application
@@ -30,6 +31,7 @@ Requirements:
 - Database integration (specify: PostgreSQL/MongoDB/etc.)
 - Authentication system
 - Responsive design
+- Context7 and Brave Search MCP servers for enhanced research
 ```
 
 ### Vue.js Application

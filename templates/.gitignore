@@ -5,7 +5,20 @@ init-prompts.txt
 prompts/
 instructions.md
 
-# Dependencies
+# Environment files with credentials (CRITICAL - NEVER COMMIT)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*.local
+
+# MCP Server credentials (CRITICAL - NEVER COMMIT)
+.env.mcp.credentials
+
+# MCP Server configuration
+mcp-config.json
+.mcp/
 node_modules/
 __pycache__/
 *.pyc

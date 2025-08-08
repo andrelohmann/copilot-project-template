@@ -37,9 +37,11 @@ When you encounter a request referencing this template:
 ## 📁 Template Structure Explained
 
 ### Core Templates
-- **`.vscode/`**: Editor configuration, extensions, tasks
-- **`.github/`**: Copilot instructions, workflows
-- **`configs/`**: Language-specific configurations
+- **`templates/.vscode/`**: Editor configuration, extensions, tasks, MCP server setup
+- **`templates/.github/`**: Copilot instructions, workflows
+- **`templates/configs/`**: Language-specific configurations
+- **`templates/.env.mcp.credentials.template`**: MCP server credentials template
+- **`templates/.gitignore`**: Git ignore patterns including credential exclusions
 
 ### Project-Specific Templates
 - **Web Applications**: React, Vue, Angular configurations
