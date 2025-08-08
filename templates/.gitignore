@@ -64,7 +64,7 @@ env/
 .conda/
 
 # Editor directories and files
-.vscode/settings.json
+# .vscode/settings.json - Allow template settings.json to be tracked
 .idea/
 *.swp
 *.swo

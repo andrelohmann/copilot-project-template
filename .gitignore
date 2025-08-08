@@ -5,6 +5,9 @@
 *.swo
 *~
 
+# Allow template .vscode configurations
+!templates/.vscode/
+
 # OS generated files
 .DS_Store
 .DS_Store?
