@@ -49,7 +49,119 @@ First, analyze the user's request to determine:
 - **Specific requirements** (database, authentication, testing, etc.)
 - **Target environment** (development setup preferences)
 
-### 3. Environment Configuration
+### 3. Technology Bootstrapping (MANDATORY)
+**IMPORTANT**: Use official initialization commands to bootstrap the project structure before copying template files.
+
+#### Web Framework Initialization Commands
+**Next.js Projects**:
+```bash
+npx create-next-app@latest {{PROJECT_NAME}} --typescript --tailwind --eslint --app --src-dir --import-alias "@/*"
+cd {{PROJECT_NAME}}
+```
+
+**Vite Projects (React/Vue/Vanilla)**:
+```bash
+# React with TypeScript
+npm create vite@latest {{PROJECT_NAME}} -- --template react-ts
+cd {{PROJECT_NAME}}
+npm install
+
+# Vue with TypeScript  
+npm create vite@latest {{PROJECT_NAME}} -- --template vue-ts
+cd {{PROJECT_NAME}}
+npm install
+```
+
+**Nuxt.js Projects**:
+```bash
+npx nuxi@latest init {{PROJECT_NAME}}
+cd {{PROJECT_NAME}}
+npm install
+```
+
+**Angular Projects**:
+```bash
+npx @angular/cli@latest new {{PROJECT_NAME}} --routing --style=scss --strict
+cd {{PROJECT_NAME}}
+```
+
+#### Backend Framework Initialization
+**Express.js Projects**:
+```bash
+npx express-generator --no-view --git {{PROJECT_NAME}}
+cd {{PROJECT_NAME}}
+npm install
+```
+
+**FastAPI Projects**:
+```bash
+mkdir {{PROJECT_NAME}}
+cd {{PROJECT_NAME}}
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+# venv\Scripts\activate   # Windows
+pip install fastapi uvicorn python-multipart
+```
+
+**Django Projects**:
+```bash
+pip install django
+django-admin startproject {{PROJECT_NAME}}
+cd {{PROJECT_NAME}}
+```
+
+#### Mobile/Desktop Framework Initialization
+**React Native Projects**:
+```bash
+npx @react-native-community/cli@latest init {{PROJECT_NAME}}
+cd {{PROJECT_NAME}}
+```
+
+**Electron Projects**:
+```bash
+mkdir {{PROJECT_NAME}}
+cd {{PROJECT_NAME}}
+npm init -y
+npm install electron --save-dev
+```
+
+#### CLI/Library Projects
+**Node.js CLI/Library**:
+```bash
+mkdir {{PROJECT_NAME}}
+cd {{PROJECT_NAME}}
+npm init -y
+```
+
+**Python Package**:
+```bash
+mkdir {{PROJECT_NAME}}
+cd {{PROJECT_NAME}}
+python -m venv venv
+source venv/bin/activate
+pip install setuptools wheel
+```
+
+**Rust Projects**:
+```bash
+cargo new {{PROJECT_NAME}}
+cd {{PROJECT_NAME}}
+```
+
+**Go Projects**:
+```bash
+mkdir {{PROJECT_NAME}}
+cd {{PROJECT_NAME}}
+go mod init {{PROJECT_NAME}}
+```
+
+#### Technology-Specific Notes
+- **Always run the official initialization command first** before copying template files
+- **Replace `{{PROJECT_NAME}}`** with the actual project name
+- **Install dependencies** as part of the initialization process
+- **Change directory** into the project folder before copying template files
+
+### 4. Environment Configuration
 Copy the environment template for project-specific variables:
 
 1. **Copy project environment template**: `templates/.env.template` → Project's `.env.template`
@@ -77,7 +189,7 @@ This archive serves as:
 
 **Important**: This file should be committed to git as valuable development material, but must never be loaded into context or interpreted by agents.
 
-### 5. Template File Selection and Copying
+### 6. Template File Selection and Copying
 **IMPORTANT**: Use VS Code's file creation tools to copy template files. DO NOT just reference file content - create actual files in the user's workspace.
 
 Based on the project analysis, copy relevant template files from this repository:
@@ -136,7 +248,84 @@ Based on the project analysis, copy relevant template files from this repository
 - `templates/.env.mcp.credentials.template` - User will copy this to `.env.mcp.credentials` locally
 - `templates/.gitignore` - Proper exclusion patterns
 
-### 6. VS Code Configuration
+#### EXPLICIT FILE COPYING COMMANDS
+**Execute these commands in order to copy all mandatory template files:**
+
+**Step 1: Read and copy all VS Code configuration files**
+```bash
+# Use read_file tool to read each template file completely, then create_file in target project:
+
+read_file: "https://github.com/andrelohmann/copilot-project-template/templates/.vscode/mcp.json"
+create_file: ".vscode/mcp.json" (exact content from template)
+
+read_file: "https://github.com/andrelohmann/copilot-project-template/templates/.vscode/settings.json"  
+create_file: ".vscode/settings.json" (exact content from template)
+
+read_file: "https://github.com/andrelohmann/copilot-project-template/templates/.vscode/extensions.json"
+create_file: ".vscode/extensions.json" (exact content from template)
+
+read_file: "https://github.com/andrelohmann/copilot-project-template/templates/.vscode/tasks.json"
+create_file: ".vscode/tasks.json" (exact content from template)
+```
+
+**Step 2: Read and copy GitHub configuration**
+```bash
+read_file: "https://github.com/andrelohmann/copilot-project-template/templates/.github/copilot-instructions.md"
+create_file: ".github/copilot-instructions.md" (replace {{PLACEHOLDERS}} with actual values)
+```
+
+**Step 3: Read and copy environment templates**
+```bash
+read_file: "https://github.com/andrelohmann/copilot-project-template/templates/.env.template"
+create_file: ".env.template" (exact content from template)
+
+read_file: "https://github.com/andrelohmann/copilot-project-template/templates/.env.mcp.credentials.template"
+create_file: ".env.mcp.credentials.template" (exact content from template)
+```
+
+**Step 4: Read and copy git configuration**
+```bash
+read_file: "https://github.com/andrelohmann/copilot-project-template/templates/.gitignore"
+create_file: ".gitignore" (exact content from template, or merge with existing)
+```
+
+**Step 5: Create prompt archive (if needed)**
+```bash
+create_file: ".prompts/archive.md" (use header template from instructions above)
+```
+
+**Step 6: Copy conditional configuration files based on project type**
+```bash
+# For Node.js/TypeScript projects:
+read_file: "https://github.com/andrelohmann/copilot-project-template/templates/configs/package.json"
+# Merge with existing package.json or create new one
+
+read_file: "https://github.com/andrelohmann/copilot-project-template/templates/configs/tsconfig.json"
+create_file: "tsconfig.json" (if TypeScript project)
+
+read_file: "https://github.com/andrelohmann/copilot-project-template/templates/configs/eslint.config.js"
+create_file: "eslint.config.js" (exact content from template)
+
+read_file: "https://github.com/andrelohmann/copilot-project-template/templates/configs/prettier.config.js"
+create_file: "prettier.config.js" (exact content from template)
+
+# For Python projects:
+read_file: "https://github.com/andrelohmann/copilot-project-template/templates/configs/requirements.txt"
+create_file: "requirements.txt" (exact content from template)
+```
+
+#### MANDATORY VERIFICATION COMMAND
+**After copying all files, run this command to verify:**
+```bash
+# Check all mandatory files exist
+ls -la .vscode/mcp.json .vscode/settings.json .vscode/extensions.json .vscode/tasks.json .github/copilot-instructions.md .env.template .env.mcp.credentials.template .gitignore
+
+# Expected output: All files should be listed with proper sizes (not empty)
+```
+
+**If ANY file is missing or has 0 bytes, the template setup is INCOMPLETE and MUST be redone.**
+
+### 7. VS Code Configuration
 
 #### Extensions to Install
 Always recommend these extensions:
@@ -176,7 +365,7 @@ This configuration:
 - Works seamlessly with VS Code's built-in credential loading
 - Can be safely committed to version control (no credentials in file)
 
-### 7. MCP Server Setup
+### 8. MCP Server Setup
 Configure Model Context Protocol servers with proper credential injection:
 
 #### Required MCP Servers (All Projects)
@@ -210,7 +399,7 @@ Configure Model Context Protocol servers with proper credential injection:
 - **Python Projects**: Python environment server
 - **Database Projects**: Database connection server (requires additional credentials in `.env.mcp.credentials`)
 
-### 8. GitHub Copilot Instructions
+### 9. GitHub Copilot Instructions
 Copy and customize the GitHub Copilot instructions template:
 
 1. **Copy base template**: `templates/.github/copilot-instructions.md` → Project's `.github/copilot-instructions.md`
@@ -222,7 +411,48 @@ Copy and customize the GitHub Copilot instructions template:
    - Technology-specific best practices
    - MCP server usage guidelines for the project
 
-### 9. Git Ignore Configuration
+### 9.1. Technology-Specific Integration
+**After copying template files, integrate them with the bootstrapped project:**
+
+#### Next.js Projects
+```bash
+# Merge template package.json dependencies with existing package.json
+# Copy ESLint and Prettier configs
+# Update next.config.js if needed
+# Integrate with existing TypeScript configuration
+```
+
+#### Vite Projects
+```bash
+# Merge template package.json dependencies
+# Update vite.config.js/ts
+# Copy ESLint, Prettier, TypeScript configs
+# Integrate with existing build configuration
+```
+
+#### Python Projects (FastAPI/Django)
+```bash
+# Merge requirements.txt
+# Copy Python-specific VS Code settings
+# Update project structure in .github/copilot-instructions.md
+# Configure virtual environment settings
+```
+
+#### Express.js Projects
+```bash
+# Merge package.json dependencies and scripts
+# Copy Node.js/Express specific configurations
+# Update server startup in VS Code tasks.json
+# Integrate with existing routing structure
+```
+
+#### Integration Notes
+- **Merge, don't overwrite**: When project already has configuration files (package.json, tsconfig.json), merge template configurations
+- **Preserve existing settings**: Keep any project-specific configurations that already exist
+- **Update placeholders**: Replace all {{PLACEHOLDER}} values with actual project information
+- **Test integration**: Verify that template configurations work with the bootstrapped project structure
+
+### 10. Git Ignore Configuration
 Set up proper git ignore patterns:
 
 1. **Copy gitignore template**: `templates/.gitignore` → Project's `.gitignore` (or merge with existing)
@@ -233,7 +463,7 @@ Set up proper git ignore patterns:
 
 Also, create a `.copilot-template-init/` directory with a `.gitkeep` file to mark the initialization as complete.
 
-### 10. Credential Security Validation
+### 11. Credential Security Validation
 After setup, verify:
 - `.vscode/mcp.json` contains no hardcoded credentials (uses `envFile` configuration)
 - `.env.mcp.credentials.template` file is copied to project for user reference
@@ -241,7 +471,7 @@ After setup, verify:
 - Context7 MCP server is configured correctly (no credentials needed)
 - Brave Search MCP server uses `envFile` for automatic credential loading
 
-### 11. User Experience Notes
+### 12. User Experience Notes
 Inform the user about the streamlined credential management:
 
 **Simplified envFile Approach:**
