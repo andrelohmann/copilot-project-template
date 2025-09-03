@@ -13,11 +13,33 @@
 4. **Copy ALL required files**: Use the checklist in section 📋 to verify completeness
 5. **Verify file creation**: Each file must physically exist in the user's workspace
 
+**🚨 CRITICAL FILE COPYING RULES:**
+
+1. **NEVER REWRITE OR MODIFY** configuration files marked as "copy as-is"
+2. **COPY EXACT CONTENT** - Read the template file and copy the content byte-for-byte
+3. **NO INTERPRETATION** - Do not attempt to "improve" or "update" template configurations
+4. **ALL MCP SERVERS** - The mcp.json file must contain ALL 5 servers from the template
+5. **NO SUBSTITUTIONS** - Do not replace NPX commands, server names, or arguments
+
 **DO NOT:**
+
 - Just describe what files should be copied
 - Reference file contents without creating actual files
 - Skip any files from the mandatory checklist
 - Assume files will be created later
+- **REWRITE OR MODIFY** template configurations
+- **COPY DOCUMENTATION FILES** from the `docs/` directory
+
+## 🚫 CRITICAL: FILES AND DIRECTORIES TO NEVER COPY
+
+**ABSOLUTELY NEVER COPY THESE:**
+
+- **`docs/` directory** - This is template documentation, NOT for projects (see docs/ignore-these-files.md)
+- **`prompts/` directory** - Template examples only, never copy to projects
+- **`instructions.md`** - Agent instructions only, never copy to projects
+- **README.md** - Template repository documentation, create project-specific README instead
+
+**WHY**: These files are template documentation and examples. They provide guidance to humans and agents but should never appear in generated projects. The docs/ directory even contains its own ignore-these-files.md warning.
 
 ## 🎯 Purpose
 
@@ -271,6 +293,15 @@ Based on the project analysis, copy relevant template files from this repository
 - `templates/.gitignore` - Proper exclusion patterns
 
 #### EXPLICIT FILE COPYING COMMANDS
+
+**🚨 CRITICAL COPYING RULES - READ BEFORE PROCEEDING:**
+
+1. **READ COMPLETE TEMPLATE FILES** - Use `read_file` to get the full, exact content
+2. **COPY BYTE-FOR-BYTE** - Create files with identical content from templates
+3. **NO REWRITING** - Do not modify, improve, or reinterpret any configuration
+4. **NO OMISSIONS** - Copy ALL content, including comments and formatting
+5. **SPECIAL ATTENTION**: `mcp.json` must contain ALL 5 servers exactly as in template
+
 **Execute these commands in order to copy all mandatory template files:**
 
 **Step 1: Read and copy all VS Code configuration files**
@@ -346,7 +377,9 @@ pip install -r requirements.txt
 ```
 
 #### MANDATORY VERIFICATION COMMAND
+
 **After copying all files, run this command to verify:**
+
 ```bash
 # Check all mandatory files exist
 ls -la .vscode/mcp.json .vscode/settings.json .vscode/extensions.json .vscode/tasks.json .github/copilot-instructions.md .env.template .env.mcp.credentials.template .gitignore
@@ -354,7 +387,16 @@ ls -la .vscode/mcp.json .vscode/settings.json .vscode/extensions.json .vscode/ta
 # Expected output: All files should be listed with proper sizes (not empty)
 ```
 
-**If ANY file is missing or has 0 bytes, the template setup is INCOMPLETE and MUST be redone.**
+**🚨 CRITICAL MCP VERIFICATION**: After copying `.vscode/mcp.json`, verify it contains ALL 5 servers:
+
+```bash
+# Verify mcp.json contains all required servers
+grep -c '"context7"\|"braveSearch"\|"playwright"\|"filesystem"\|"git"' .vscode/mcp.json
+
+# Expected output: 5 (indicating all 5 servers are present)
+```
+
+**If ANY file is missing, has 0 bytes, OR mcp.json doesn't show "5" servers, the template setup is INCOMPLETE and MUST be redone.**
 
 ### 7. VS Code Configuration
 
@@ -382,13 +424,28 @@ Copy `templates/.vscode/settings.json` directly - it contains the proper VS Code
 #### MCP Server Configuration
 Copy `templates/.vscode/mcp.json` directly from the templates folder - it contains the correct `envFile` configuration:
 
-**The template file already contains the proper configuration:**
-- Uses `envFile: "${workspaceFolder}/.env.mcp.credentials"` for automatic credential loading
-- Context7 server (no credentials needed)
-- Brave Search server (credentials from `.env.mcp.credentials`)
-- Filesystem and Git servers for enhanced capabilities
+**🚨 CRITICAL: COPY EXACTLY - NO MODIFICATIONS ALLOWED**
 
-**Simply copy `templates/.vscode/mcp.json` as-is** - no modifications needed.
+The template file `templates/.vscode/mcp.json` contains **ALL 5 REQUIRED MCP SERVERS**:
+1. **context7** - Documentation research (no API key)
+2. **braveSearch** - Web research (requires BRAVE_API_KEY)
+3. **playwright** - Browser automation
+4. **filesystem** - File operations 
+5. **git** - Version control operations
+
+**MANDATORY COPYING RULE**: Copy `templates/.vscode/mcp.json` **BYTE-FOR-BYTE** with **ZERO MODIFICATIONS**
+
+- ✅ **DO**: Read the complete template file content and copy it exactly
+- ❌ **DO NOT**: Rewrite, modify, or "improve" the configuration
+- ❌ **DO NOT**: Remove any servers or change their configurations
+- ❌ **DO NOT**: Modify NPX commands, server names, or arguments
+- ❌ **DO NOT**: Change envFile paths or server configurations
+
+**Why exact copying is critical:**
+- Uses `envFile: "${workspaceFolder}/.env.mcp.credentials"` for automatic credential loading
+- All 5 servers are required for full AI-enhanced development capabilities
+- NPX commands ensure latest server versions without installation
+- Configuration is tested and optimized for VS Code 1.102+
 
 This configuration:
 - Uses `envFile` to automatically load credentials from `.env.mcp.credentials`
@@ -634,13 +691,22 @@ When copying template files:
 
 **If ANY file is missing or incomplete, the template setup is NOT COMPLETE.**
 
-## �🚫 Important Restrictions
+## 🚫 Important Restrictions
 
 ### Do Not Copy These Files
-- This `instructions.md` file
-- Any files in the `prompts/` directory
-- Template-specific documentation
-- `.git/` directory or git-related metadata
+
+**ABSOLUTELY NEVER COPY THESE:**
+
+- **`docs/` directory** - This is template documentation, NOT for projects
+- **`prompts/` directory** - Template examples only, never copy to projects  
+- **`instructions.md`** - Agent instructions only, never copy to projects
+- **README.md** - Template repository documentation, create project-specific README instead
+- **`.git/` directory** - Git-related metadata
+- **Any template-specific documentation files**
+
+**WHY**: These files are template documentation and examples. They provide guidance to humans and agents but should never appear in generated projects.
+
+**CONSEQUENCES OF COPYING DOCS FILES**: If you copy the `docs/` directory, you will confuse users by providing template documentation instead of project documentation.
 
 ### Initialization Markers
 Always create these markers to indicate successful initialization:
@@ -687,6 +753,10 @@ ls -la .github/copilot-instructions.md
 ls -la .env.template .env.mcp.credentials.template
 ls -la .gitignore
 
+# 🚨 CRITICAL: Verify mcp.json has ALL 5 servers
+grep -c '"context7"\|"braveSearch"\|"playwright"\|"filesystem"\|"git"' .vscode/mcp.json
+# MUST output "5" - if not, mcp.json was incorrectly copied
+
 # For Python projects, ALSO verify:
 ls -la venv/  # Virtual environment directory should exist
 source venv/bin/activate  # Activate venv (Linux/Mac)
@@ -695,6 +765,9 @@ pip list | grep -E "(fastapi|django|python-dotenv)"  # Verify key packages insta
 deactivate  # Exit venv
 ```
 
-**All files MUST exist. If any file is missing, the template setup is INCOMPLETE.**
+**FAILURE CONDITIONS:**
+- **Any file missing** = Template setup INCOMPLETE
+- **MCP server count ≠ 5** = Template setup INCOMPLETE - mcp.json was rewritten incorrectly
+- **Python venv missing** = Template setup INCOMPLETE (for Python projects)
 
-**For Python projects: If venv is missing or packages not installed in venv, the setup is INCOMPLETE.**
+**If ANY condition fails, the template setup MUST be redone with exact file copying.**

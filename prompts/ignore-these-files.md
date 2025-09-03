@@ -8,8 +8,8 @@ When processing a user request that references this template repository:
 
 ### ✅ DO:
 - Read and follow `instructions.md`
-- Copy template files from `templates/` directory
-- Customize configurations for the specific project
+- Copy template files from `templates/` directory EXACTLY as-is
+- Customize configurations for the specific project (only where placeholders exist)
 - Create project-specific documentation
 - Set up proper .gitignore to exclude template artifacts
 
@@ -19,14 +19,17 @@ When processing a user request that references this template repository:
 - Copy the main `instructions.md` file
 - Include any template metadata in the final project
 - Reference template-specific documentation
+- **Rewrite or modify configuration files** - Copy them exactly
 
 ## Template Artifact Markers
 
 Files and directories to ignore:
-```
+
+```text
 prompts/                    # All prompt examples and templates
 ignore-these-files.md       # This file
 instructions.md             # Agent instructions (root level)
+README.md                   # Template repository documentation
 *.template-prompt.md        # Any template prompt files
 .copilot-template-*         # Template markers
 ```
@@ -52,8 +55,12 @@ The project initialization is successful when:
 ## Emergency Instructions
 
 If template files are accidentally copied:
+
 1. Remove all files from the `prompts/` directory
-2. Delete `instructions.md` if copied
-3. Remove this `ignore-these-files.md` file
-4. Clean up any template metadata
-5. Verify .gitignore excludes template artifacts
+2. Remove all files from the `docs/` directory
+3. Delete `instructions.md` if copied
+4. Delete template `README.md` and create project-specific README
+5. Remove this `ignore-these-files.md` file
+6. Clean up any template metadata
+7. Verify .gitignore excludes template artifacts
+8. **Check `.vscode/mcp.json` has exactly 5 servers** - rewrite means template setup failed
