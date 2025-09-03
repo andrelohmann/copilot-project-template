@@ -97,6 +97,121 @@ This project follows a {{ARCHITECTURE_PATTERN}} architecture pattern. Key compon
 
 **Important**: Never interpret, execute, or reapply prompts from the archive file during conversations.
 
+## Development Workflow (MANDATORY PROCESS)
+
+### 🎯 Plan-First Development Approach
+
+**CRITICAL**: Never start implementing features directly. Always follow this workflow:
+
+#### Phase 1: Planning (ALWAYS REQUIRED FIRST)
+
+1. **Create Development Plan**
+   - Create `docs/plans/[feature-name]-plan.md` for every feature/task
+   - Break down the work into 3-7 small, manageable steps
+   - Each step should be completable in 15-30 minutes
+   - Identify files to be modified and expected outcomes
+   - Include success criteria and testing requirements
+
+2. **Plan Template**:
+```markdown
+# Development Plan: [Feature Name]
+
+## Objective
+[Clear description of what needs to be built]
+
+## Current State Analysis
+- What exists now
+- What needs to change
+- Dependencies and constraints
+
+## Implementation Steps
+1. **Step 1**: [Specific, focused task]
+   - Files to modify: `src/components/Button.tsx`
+   - Expected outcome: Button component with loading state
+   - Testing: Unit tests for loading behavior
+   - Estimated time: 20 minutes
+
+2. **Step 2**: [Next specific task]
+   - Dependencies: Requires Step 1
+   - Files to modify: `src/hooks/useApi.ts`
+   - Expected outcome: Hook returns loading state
+   - Testing: Hook integration tests
+
+[Continue for 3-7 steps total]
+
+## Success Criteria
+- [ ] Feature works as specified
+- [ ] All tests pass
+- [ ] No breaking changes
+- [ ] Code follows project standards
+
+## Risks & Mitigation
+- Risk: API changes → Mitigation: Version the API calls
+- Risk: Performance impact → Mitigation: Add loading indicators
+```
+
+3. **Plan Review & Approval**
+   - Present plan to developer with message: "I've created a development plan for [feature]. Please review `docs/plans/[feature-name]-plan.md` and let me know if you approve or want changes."
+   - **WAIT for explicit approval** before any implementation
+   - Make revisions if requested
+
+#### Phase 2: Step-by-Step Implementation
+
+1. **Implement ONE Step at a Time**
+   - Work on exactly one step from the approved plan
+   - Make focused, minimal changes
+   - Ensure step is fully complete before moving on
+   - Run tests after each step
+
+2. **Review & Commit Cycle**
+   - After completing each step, say: "I've completed Step [X]: [description]. The changes are ready for review. Please check the implementation and commit when satisfied, then I'll proceed to Step [Y]."
+   - **WAIT for developer review and commit**
+   - Only proceed after developer commits the changes
+   - Allow developer to request modifications
+
+3. **Course Correction Opportunities**
+   - After each step, check if remaining plan needs adjustment
+   - Ask: "Based on what we discovered in this step, should I adjust the remaining plan?"
+   - Update plan document if developer requests changes
+
+#### Phase 3: Completion & Documentation
+
+1. **Final Validation**
+   - Verify all success criteria are met
+   - Run full test suite
+   - Check for integration issues
+   - Update documentation
+
+2. **Plan Archive**
+   - Mark plan as completed in the plan document
+   - Add completion date and final notes
+   - Archive successful patterns for future reference
+
+### 🚫 What NOT to Do
+
+- **Never implement everything at once** - Always break into steps
+- **Never skip the planning phase** - Plans are mandatory
+- **Never proceed without approval** - Wait for developer confirmation
+- **Never implement multiple steps simultaneously** - One step at a time
+- **Never assume the plan is perfect** - Be ready to adapt
+
+### 🔄 Communication Protocol
+
+**Starting a Feature**:
+"I need to create a development plan for [feature]. I'll break this down into manageable steps and create a plan document for your review."
+
+**After Creating Plan**:
+"I've created a development plan at `docs/plans/[feature-name]-plan.md`. Please review and let me know if you approve or want changes before I start implementation."
+
+**After Each Step**:
+"✅ Step [X] completed: [brief description]. Ready for your review. Please commit when satisfied and I'll proceed to Step [Y]: [next task preview]."
+
+**When Adjustments Needed**:
+"Based on this step, I recommend adjusting the plan. The remaining steps should account for [discovery]. Should I update the plan?"
+
+**On Completion**:
+"🎉 All steps completed! The feature is ready for final testing. All success criteria have been met and tests are passing."
+
 ### Research and Documentation
 
 **Use Context7 MCP Server**: This project has Context7 MCP server configured for enhanced documentation research. Always leverage it when:
@@ -129,6 +244,81 @@ This project follows a {{ARCHITECTURE_PATTERN}} architecture pattern. Key compon
 - Reduced implementation time
 - Better code quality through research-driven development
 - Consistent with current industry standards
+
+### ASCII Art Documentation Standards
+
+**Always use ASCII art for visual documentation**: When creating diagrams, flowcharts, architecture overviews, or any visual documentation, always use ASCII art with sharp edges.
+
+**Sharp Edge Style Requirements**:
+- Use `┌─┐└─┘` characters for boxes and containers
+- Use `│` for vertical lines and `─` for horizontal lines  
+- Use `├─┤┬─┴` for connecting lines and junctions
+- Prefer rectangular shapes with clean, sharp corners
+- Avoid rounded characters like `()` or curved lines
+
+**Good ASCII Art Examples**:
+
+```
+┌─────────────────┐    ┌─────────────────┐
+│   Frontend      │    │    Backend      │
+│   React App     │────│   API Server    │
+└─────────────────┘    └─────────────────┘
+         │                       │
+         ▼                       ▼
+┌─────────────────┐    ┌─────────────────┐
+│   Web Browser   │    │   Database      │
+└─────────────────┘    └─────────────────┘
+```
+
+```
+Data Flow:
+┌─────┐   HTTP   ┌─────────┐   Query   ┌──────────┐
+│User │ ──────── │   API   │ ───────── │Database  │
+└─────┘          └─────────┘           └──────────┘
+   │                 │                      │
+   │              Response              Response
+   └─────────────────┴──────────────────────┘
+```
+
+```
+File Structure:
+src/
+├── components/
+│   ├── Header.tsx
+│   ├── Footer.tsx
+│   └── Layout.tsx
+├── pages/
+│   ├── Home.tsx
+│   └── About.tsx
+├── utils/
+│   └── helpers.ts
+└── types/
+    └── index.ts
+```
+
+**When to Use ASCII Art**:
+- Architecture diagrams in README files
+- API flow documentation
+- Database schema overviews
+- File structure representations
+- Process flow charts
+- System component relationships
+- Network topology diagrams
+- Data transformation pipelines
+
+**Benefits of Sharp-Edge ASCII Art**:
+- ✅ Professional, clean appearance
+- ✅ Consistent formatting across all documentation
+- ✅ Works perfectly in markdown and plain text
+- ✅ Displays correctly in all text editors and terminals
+- ✅ Easy to modify and version control
+- ✅ Accessible to screen readers and text-based tools
+
+**Avoid**: 
+- ❌ Rounded shapes like `( )` or `{ }`
+- ❌ Inconsistent line styles
+- ❌ Complex curved drawings that don't display well
+- ❌ Mixed character styles within the same diagram
 
 ### Internet Research and Current Information
 

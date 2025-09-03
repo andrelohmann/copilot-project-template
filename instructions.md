@@ -260,6 +260,8 @@ Based on the project analysis, copy relevant template files from this repository
 #### Recommended Files  
 **Copy these for most projects:**
 - `templates/.prompts/archive.md` → Project's `.prompts/archive.md` (create with proper header)
+- `templates/docs/plans/README.md` → Project's `docs/plans/README.md` (copy as-is)
+- `templates/docs/plans/plan-template.md` → Project's `docs/plans/plan-template.md` (copy as-is)
 
 #### Conditional Files (Copy Based on Project Type)
 **Select appropriate configuration files based on technology stack:**
@@ -342,9 +344,16 @@ read_file: "https://github.com/andrelohmann/copilot-project-template/templates/.
 create_file: ".gitignore" (exact content from template, or merge with existing)
 ```
 
-**Step 5: Create prompt archive (if needed)**
+**Step 5: Create prompt archive and planning templates (if needed)**
 ```bash
 create_file: ".prompts/archive.md" (use header template from instructions above)
+
+# Copy planning documentation
+read_file: "https://github.com/andrelohmann/copilot-project-template/templates/docs/plans/README.md"
+create_file: "docs/plans/README.md" (exact content from template)
+
+read_file: "https://github.com/andrelohmann/copilot-project-template/templates/docs/plans/plan-template.md"
+create_file: "docs/plans/plan-template.md" (exact content from template)
 ```
 
 **Step 6: Copy conditional configuration files based on project type**
@@ -665,6 +674,10 @@ When copying template files:
 ### ✅ Prompt Management (RECOMMENDED)
 - [ ] `.prompts/archive.md` (create with proper header from instructions)
 
+### ✅ Planning Templates (RECOMMENDED)
+- [ ] `docs/plans/README.md` (exact copy from `templates/docs/plans/README.md`)
+- [ ] `docs/plans/plan-template.md` (exact copy from `templates/docs/plans/plan-template.md`)
+
 ### ✅ Project-Specific Configs (CONDITIONAL)
 **Copy based on project type:**
 - [ ] `package.json` (for Node.js/web projects)
@@ -730,6 +743,20 @@ After initialization, update the project's README.md to include:
 - Development workflow
 - Technology stack overview
 - Contribution guidelines
+
+**IMPORTANT - ASCII Art Documentation Standards**:
+When creating any visual documentation (architecture diagrams, flowcharts, file structures, API flows), always use ASCII art with sharp edges:
+- Use `┌─┐└─┘│─├─┤┬─┴` characters for boxes and connections
+- Avoid rounded characters like `()` or curved lines
+- Maintain consistent rectangular shapes with clean corners
+- This ensures professional appearance and compatibility across all text environments
+
+**Example ASCII Art Style**:
+```
+┌─────────────────┐    ┌─────────────────┐
+│   Frontend      │────│    Backend      │
+└─────────────────┘    └─────────────────┘
+```
 
 ## 🎯 Success Criteria
 
