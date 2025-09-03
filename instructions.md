@@ -205,12 +205,281 @@ go mod init {{PROJECT_NAME}}
 - **Keep venv activated**: All subsequent pip commands must run within activated venv
 - **Test venv activation**: Run `which python` (Linux/Mac) or `where python` (Windows) to verify venv path
 
-### 4. Environment Configuration
+### 4. Development Container Setup (MANDATORY)
+**IMPORTANT**: Create a devcontainer configuration for consistent development environments across all team members and platforms.
+
+#### Devcontainer Requirements Analysis
+Based on the project type, determine the required devcontainer components:
+
+**All Projects (Base Requirements)**:
+- Node.js (for MCP servers and tooling)
+- Git (for version control operations)
+- Docker-in-Docker (for containerized workflows)
+- VS Code extensions (from templates/.vscode/extensions.json)
+
+**Technology-Specific Requirements**:
+- **Python Projects**: Python runtime, pip, virtual environment support
+- **Node.js/Web Projects**: Node.js, npm/yarn, specific framework CLIs
+- **Database Projects**: Database clients, connection tools
+- **Mobile Projects**: Platform-specific SDKs and emulators
+
+#### Create Devcontainer Configuration
+**MANDATORY FILES TO CREATE:**
+
+1. **`.devcontainer/devcontainer.json`** (Main configuration)
+2. **`.devcontainer/Dockerfile`** (Custom image with project requirements)
+3. **`.devcontainer/docker-compose.yml`** (If database/services needed)
+4. **`.devcontainer/post-create.sh`** (Setup script for MCP and dependencies)
+
+#### Technology-Specific Devcontainer Templates
+
+**Web Projects (Next.js, React, Vue)**:
+```json
+// .devcontainer/devcontainer.json
+{
+  "name": "{{PROJECT_NAME}} Development",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "18"
+    },
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "GitHub.copilot",
+        "GitHub.copilot-chat",
+        "ms-vscode.vscode-typescript-next",
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
+        "bradlc.vscode-tailwindcss"
+      ]
+    }
+  },
+  "postCreateCommand": ".devcontainer/post-create.sh",
+  "remoteUser": "node"
+}
+```
+
+**Python Projects (FastAPI, Django)**:
+```json
+// .devcontainer/devcontainer.json
+{
+  "name": "{{PROJECT_NAME}} Development",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.11"
+    },
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "18"
+    },
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "GitHub.copilot",
+        "GitHub.copilot-chat",
+        "ms-python.python",
+        "ms-python.vscode-pylance"
+      ]
+    }
+  },
+  "postCreateCommand": ".devcontainer/post-create.sh",
+  "remoteUser": "vscode"
+}
+```
+
+**Full-Stack Projects (with Database)**:
+```yaml
+# .devcontainer/docker-compose.yml
+version: '3.8'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ../..:/workspaces:cached
+    command: sleep infinity
+    network_mode: service:db
+  
+  db:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: {{PROJECT_NAME}}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+volumes:
+  postgres-data:
+```
+
+#### Base Dockerfile Template
+**Create `.devcontainer/Dockerfile` with MCP support:**
+
+```dockerfile
+# .devcontainer/Dockerfile
+FROM mcr.microsoft.com/devcontainers/{{BASE_IMAGE}}:{{VERSION}}
+
+# Install Node.js for MCP servers (required for all projects)
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+    && apt-get install -y nodejs
+
+# Install common development tools
+RUN apt-get update && apt-get install -y \
+    curl \
+    wget \
+    git \
+    vim \
+    htop \
+    tree \
+    jq \
+    && rm -rf /var/lib/apt/lists/*
+
+# Technology-specific installations
+{{TECH_SPECIFIC_INSTALLATIONS}}
+
+# Create workspace directory
+WORKDIR /workspace
+
+# Copy and run post-create setup
+COPY post-create.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/post-create.sh
+```
+
+#### Post-Create Setup Script
+**Create `.devcontainer/post-create.sh` for automated setup:**
+
+```bash
+#!/bin/bash
+# .devcontainer/post-create.sh
+
+set -e
+
+echo "🚀 Setting up development environment..."
+
+# Verify Node.js for MCP servers
+echo "📦 Verifying Node.js installation..."
+node --version
+npm --version
+
+# Install global development tools
+echo "🔧 Installing global development tools..."
+npm install -g @upstash/context7-mcp@latest
+npm install -g @brave/brave-search-mcp-server
+npm install -g @modelcontextprotocol/server-filesystem
+npm install -g @modelcontextprotocol/server-git
+
+# Technology-specific setup
+{{TECH_SPECIFIC_SETUP}}
+
+# Set up environment files
+echo "📄 Setting up environment files..."
+if [ -f ".env.mcp.credentials.template" ]; then
+    cp .env.mcp.credentials.template .env.mcp.credentials
+    echo "📝 Please update .env.mcp.credentials with your API keys"
+fi
+
+# Install project dependencies
+{{DEPENDENCY_INSTALLATION}}
+
+echo "✅ Development environment setup complete!"
+echo "🔧 MCP servers are configured and ready"
+echo "📝 Don't forget to update .env.mcp.credentials with your API keys"
+```
+
+#### Technology-Specific Setup Variations
+
+**For Python Projects**, add to post-create.sh:
+```bash
+# Python-specific setup
+echo "🐍 Setting up Python environment..."
+python -m venv venv
+source venv/bin/activate
+pip install --upgrade pip
+if [ -f "requirements.txt" ]; then
+    pip install -r requirements.txt
+fi
+```
+
+**For Node.js Projects**, add to post-create.sh:
+```bash
+# Node.js-specific setup
+echo "📦 Installing Node.js dependencies..."
+if [ -f "package.json" ]; then
+    npm install
+fi
+```
+
+**For Database Projects**, add to post-create.sh:
+```bash
+# Database setup
+echo "🗄️ Setting up database..."
+# Wait for database to be ready
+until pg_isready -h db -p 5432 -U postgres; do
+    echo "Waiting for database..."
+    sleep 2
+done
+
+# Run initial migrations if available
+{{DATABASE_SETUP_COMMANDS}}
+```
+
+#### Devcontainer Creation Commands
+
+**Execute these commands to create devcontainer files:**
+
+```bash
+# Create devcontainer directory
+mkdir -p .devcontainer
+
+# Create main devcontainer.json (technology-specific)
+create_file: ".devcontainer/devcontainer.json" (use appropriate template above)
+
+# Create Dockerfile with MCP requirements
+create_file: ".devcontainer/Dockerfile" (customize for project technology)
+
+# Create post-create setup script
+create_file: ".devcontainer/post-create.sh" (include MCP and tech-specific setup)
+
+# For full-stack projects with database:
+create_file: ".devcontainer/docker-compose.yml" (if database required)
+
+# Make post-create script executable
+chmod +x .devcontainer/post-create.sh
+```
+
+#### Devcontainer Benefits for Agentic Workflow
+
+1. **Consistent Environment**: All team members and AI agents work in identical environments
+2. **MCP Server Support**: Pre-installed MCP servers for enhanced AI capabilities
+3. **Isolated Dependencies**: Project dependencies don't conflict with host system
+4. **Reproducible Builds**: Exact same setup on any machine or CI/CD system
+5. **Version Pinning**: Specific tool versions prevent compatibility issues
+6. **Database Integration**: Optional database containers for full-stack development
+
+#### VS Code Integration
+The devcontainer automatically:
+- Loads all extensions from `.vscode/extensions.json`
+- Applies settings from `.vscode/settings.json`
+- Configures MCP servers from `.vscode/mcp.json`
+- Sets up integrated terminal with proper environment
+
+### 5. Environment Configuration
 Copy the environment template for project-specific variables:
 
 1. **Copy project environment template**: `templates/.env.template` → Project's `.env.template`
 
-### 4. Prompt Archive Setup
+### 6. Prompt Archive Setup
 Create the prompt archive file for development history tracking:
 
 1. **Create `.prompts/` directory**: Create the directory if it doesn't exist
@@ -306,7 +575,33 @@ Based on the project analysis, copy relevant template files from this repository
 
 **Execute these commands in order to copy all mandatory template files:**
 
-**Step 1: Read and copy all VS Code configuration files**
+**Step 1: Create development container configuration**
+```bash
+# Create devcontainer directory and files based on project technology:
+
+mkdir -p .devcontainer
+
+# Read and copy base devcontainer template
+read_file: "https://github.com/andrelohmann/copilot-project-template/templates/.devcontainer/devcontainer.json"
+create_file: ".devcontainer/devcontainer.json" (replace {{PROJECT_NAME}} and customize for technology)
+
+# Read and copy Dockerfile with MCP server support  
+read_file: "https://github.com/andrelohmann/copilot-project-template/templates/.devcontainer/Dockerfile"
+create_file: ".devcontainer/Dockerfile" (replace {{PROJECT_NAME}} and customize for project)
+
+# Read and copy post-create setup script
+read_file: "https://github.com/andrelohmann/copilot-project-template/templates/.devcontainer/post-create.sh"
+create_file: ".devcontainer/post-create.sh" (replace {{PROJECT_NAME}} and {{TECH_STACK}})
+
+# For full-stack projects with database requirements:
+read_file: "https://github.com/andrelohmann/copilot-project-template/templates/.devcontainer/docker-compose.yml"
+create_file: ".devcontainer/docker-compose.yml" (replace {{PROJECT_NAME}} if database needed)
+
+# Make post-create script executable
+chmod +x .devcontainer/post-create.sh
+```
+
+**Step 2: Read and copy all VS Code configuration files**
 ```bash
 # Use read_file tool to read each template file completely, then create_file in target project:
 
@@ -613,6 +908,12 @@ This approach provides the best of both worlds:
 
 ## 🔧 Template File Locations
 
+### Development Container Templates
+- `templates/.devcontainer/devcontainer.json` - Base devcontainer configuration with MCP support
+- `templates/.devcontainer/Dockerfile` - Development container image with pre-installed tools
+- `templates/.devcontainer/post-create.sh` - Automated setup script for environment initialization
+- `templates/.devcontainer/docker-compose.yml` - Multi-service setup for full-stack projects
+
 ### VS Code Templates
 - `templates/.vscode/mcp.json` - MCP server configuration with envFile
 - `templates/.vscode/settings.json` - Base VS Code settings
@@ -654,6 +955,12 @@ When copying template files:
 ## � MANDATORY FILE COPYING CHECKLIST
 
 **CRITICAL**: Before completing initialization, verify ALL these files have been copied to the user's project:
+
+### ✅ Development Container (MANDATORY)
+- [ ] `.devcontainer/devcontainer.json` (create based on project technology)
+- [ ] `.devcontainer/Dockerfile` (with MCP server support)
+- [ ] `.devcontainer/post-create.sh` (executable setup script)
+- [ ] `.devcontainer/docker-compose.yml` (if database/services required)
 
 ### ✅ VS Code Configuration (REQUIRED)
 - [ ] `.vscode/mcp.json` (exact copy from `templates/.vscode/mcp.json`)
@@ -774,6 +1081,11 @@ The initialization is successful when:
 **After completing all steps, run this verification:**
 
 ```bash
+# Verify development container files exist
+ls -la .devcontainer/devcontainer.json .devcontainer/Dockerfile .devcontainer/post-create.sh
+# For full-stack projects, also check:
+# ls -la .devcontainer/docker-compose.yml
+
 # Verify all mandatory files exist
 ls -la .vscode/mcp.json .vscode/settings.json .vscode/extensions.json .vscode/tasks.json
 ls -la .github/copilot-instructions.md
@@ -783,6 +1095,9 @@ ls -la .gitignore
 # 🚨 CRITICAL: Verify mcp.json has ALL 5 servers
 grep -c '"context7"\|"braveSearch"\|"playwright"\|"filesystem"\|"git"' .vscode/mcp.json
 # MUST output "5" - if not, mcp.json was incorrectly copied
+
+# Verify devcontainer post-create script is executable
+test -x .devcontainer/post-create.sh && echo "✅ post-create.sh is executable" || echo "❌ post-create.sh needs chmod +x"
 
 # For Python projects, ALSO verify:
 ls -la venv/  # Virtual environment directory should exist
@@ -796,5 +1111,7 @@ deactivate  # Exit venv
 - **Any file missing** = Template setup INCOMPLETE
 - **MCP server count ≠ 5** = Template setup INCOMPLETE - mcp.json was rewritten incorrectly
 - **Python venv missing** = Template setup INCOMPLETE (for Python projects)
+- **Devcontainer files missing** = Template setup INCOMPLETE - consistent environment not configured
+- **post-create.sh not executable** = Template setup INCOMPLETE - automated setup will fail
 
 **If ANY condition fails, the template setup MUST be redone with exact file copying.**

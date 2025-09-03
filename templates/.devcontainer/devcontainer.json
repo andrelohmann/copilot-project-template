@@ -1,0 +1,48 @@
+{
+  "name": "{{PROJECT_NAME}} Development Environment",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "."
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "18"
+    },
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/devcontainers/features/git:1": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "GitHub.copilot",
+        "GitHub.copilot-chat",
+        "gujjar19.memoripilot",
+        "ms-vscode.vscode-typescript-next",
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "bradlc.vscode-tailwindcss",
+        "PKief.material-icon-theme",
+        "GitHub.github-vscode-theme",
+        "ms-vscode.vscode-json",
+        "redhat.vscode-yaml",
+        "ms-vscode.vscode-docker",
+        "ms-azuretools.vscode-containers"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "terminal.integrated.profiles.linux": {
+          "bash": {
+            "path": "/bin/bash"
+          }
+        }
+      }
+    }
+  },
+  "forwardPorts": [3000, 8000, 5000, 8080],
+  "postCreateCommand": ".devcontainer/post-create.sh",
+  "remoteUser": "vscode",
+  "workspaceFolder": "/workspace",
+  "shutdownAction": "stopContainer"
+}
